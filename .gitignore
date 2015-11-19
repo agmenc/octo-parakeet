@@ -1,0 +1,30 @@
+
+# use glob syntax.
+syntax: glob
+
+# unwanted file types
+*.ser
+*.class
+*~
+*.bak
+*.off
+*.old
+.DS_Store
+
+# building
+out
+target
+null
+tmp*
+dist
+test-output
+
+# project
+target
+project/boot
+credentials.sbt
+.idea*
+logs
+
+# pmip
+pmip*
