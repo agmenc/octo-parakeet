@@ -1,9 +1,10 @@
 package checkout
 
+import checkout.OfferQualifiers._
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CheckoutSpec extends WordSpec with MustMatchers {
-  val checkout = new Checkout(
+  private val checkout = Checkout(
     "Apple" -> "0.6",
     "Orange" -> "0.25"
   )
@@ -22,9 +23,23 @@ class CheckoutSpec extends WordSpec with MustMatchers {
   }
 
   "Item names are case insensitive" in {
-    new Checkout(
+    Checkout(
       "aPPLe" -> "0.6",
       "OraNgE" -> "0.25"
     ).billFor("aPpLe", "APPLE", "OrAnGe", "applE") mustEqual Price("2.05")
+  }
+
+  "We can support special offers on single items" in {
+    val discountCheckout = checkout.withOffers(
+      Offer("Apple", Price("0.80"), buyOneGetOneFree),
+      Offer("Orange", Price("0.50"), threeForTwo)
+    )
+
+    discountCheckout.billFor("Apple") mustEqual Price("0.60")
+    discountCheckout.billFor("Apple", "Apple") mustEqual Price("0.80")
+    discountCheckout.billFor("Apple", "Apple", "Apple") mustEqual Price("1.40")
+
+    val eightOranges = List.fill(8)("Orange")
+    discountCheckout.billFor(eightOranges:_*) mustEqual Price("1.50")
   }
 }
